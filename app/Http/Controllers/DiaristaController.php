@@ -2,12 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DiaristaRequest;
 use App\Models\Diarista;
+use App\Services\ViaCEP;
 use Illuminate\Http\Request;
 
 
 class DiaristaController extends Controller
 {
+    /* 
+    Para PHP até 7.4 fazer assim:    
+
+     protected viaCEP $viaCep;
+
+     public function __construct(
+         viaCEP $viaCep
+          ) {
+              $this->viaCep = $viaCep;        
+    }    
+    */
+
+    // promoção de propriedade no costrutor, apartir do PHP 8
+    public function __construct(
+        protected viaCEP $viaCep
+    ) {
+        
+    }
+
     /**
      * Lista as diaristas
      * 
@@ -41,7 +62,7 @@ class DiaristaController extends Controller
      * @return void
      */
 
-    public function store(Request $request)
+    public function store(DiaristaRequest $request)
     {
         # code...
         $dados = $request->except('_token');
@@ -50,6 +71,7 @@ class DiaristaController extends Controller
         $dados['cpf'] = str_replace(['.', '-'], '', $dados['cpf']);
         $dados['cep'] = str_replace('-', '', $dados['cep']);
         $dados['telefone'] = str_replace(['(', ')' , ' ' , '-'], '', $dados['telefone']);
+        $dados['codigo_ibge'] = $this->viaCep->buscar($dados['cep'])['ibge'];
 
         Diarista::create($dados);
 
@@ -82,7 +104,7 @@ class DiaristaController extends Controller
      * @return void
      */
 
-    public function update(int $id, Request $request)
+    public function update(int $id, DiaristaRequest $request)
     {
         # code...
         $diarista = Diarista::findOrFail($id); // buscar a diatista no DB - se não achar retorna 404 error 
@@ -92,6 +114,7 @@ class DiaristaController extends Controller
         $dados['cpf'] = str_replace(['.', '-'], '', $dados['cpf']);
         $dados['cep'] = str_replace('-', '', $dados['cep']);
         $dados['telefone'] = str_replace(['(', ')' , ' ' , '-'], '', $dados['telefone']);
+        $dados['codigo_ibge'] = $this->viaCep->buscar($dados['cep'])['ibge'];
 
         if($request->hasFile('foto_usuario')) {
             /* 

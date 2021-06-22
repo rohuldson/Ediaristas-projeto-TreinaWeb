@@ -55,14 +55,14 @@
     <input value="{{ @$diarista->estado }}" type="text" class="form-control" id="estado" name="estado" required maxlength="2">
 </div>
 
-<div class="mb-3">
+<!-- <div class="mb-3">
     <label for="codigo_ibge" class="form-label">Código IBGE</label>
     <input  value="{{ @$diarista->codigo_ibge }}" type="text" class="form-control" id="codigo_ibge" name="codigo_ibge" required>
-</div>
+</div> -->
 
 <div class="mb-3">
     <label for="foto_usuario" class="form-label">Foto</label>
-    <input type="file" class="form-control" id="foto_usuario" name="foto_usuario" >
+    <input type="file" class="form-control" id="foto_usuario" name="foto_usuario" nullable>
 </div>
 
 
